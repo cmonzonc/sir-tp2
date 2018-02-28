@@ -3,57 +3,72 @@ package services;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import opower.Home;
 import opower.Person;
 
 public class HomeServices extends GeneralQueries {
 
+	
+    CriteriaQuery<Home> criteriaQuery = cb.createQuery(Home.class);
+    Root<Home> homeRoot = criteriaQuery.from(Home.class);
 
     public HomeServices(EntityManager manager) {
-		super(manager);
-	}
-
-
-
-
-	public void createHome(Double size, Integer pieces, String name, String name_person, String surname_person,
-                           String mail) {
-
-        // int numOfEmployees = manager.createQuery("Select a From Employee a", Employee.class).getResultList().size();
-        // if (numOfEmployees == 0) {
-        Person person;
-
-        //person = createPerson(name_person, surname_person, mail);
-
-        // Home home = new Home(size, pieces, name, person);
-        // manager.persist(home);
+        super(manager);
     }
 
-
-
-
-    public void listHomes() {
-        List<Home> resultList = manager.createQuery("Select a From Home a", Home.class).getResultList();
-
-        System.out.println("Number of houses: " + resultList.size());
-
-        for (Home next : resultList) {
-            System.out.println("Home: " + next.getId() + next.getName() + next.getPieces() + next.getTaille());
-        }
-    }
-	
-    public void getHomeById(Integer idHome) {
-        List<Home> resultById = manager.createQuery("Select h FROM Home h WHERE id = :idHome", Home.class)
-                                       .setParameter("idHome", idHome)
-                                       .getResultList();
-
-        System.out.println("Number of rows returned: " + resultById.size());
-
-        for (Home next : resultById) {
-            System.out.println("Home with ID " + next.getId() + next.getPieces());
+    public void showResponse(List<Home> homes) {
+        for (Home home : homes) {
+            System.out.println(">:" + home.getName());
+            System.out.println(">:" + home.getPieces());
+            System.out.println(">:" + home.getPieces());
         }
     }
 
+    public List<Home> getPersonByIdentifier(int identifier) {
+        criteriaQuery.select(homeRoot);
+        criteriaQuery.where(cb.equal(homeRoot.get("id"), identifier));
+
+        List<Home> homes = manager.createQuery(criteriaQuery).getResultList();
+
+        showResponse(homes);
+
+        return homes;
+    }
+
+    public List<Home> getPersonByName(String name) {
+        criteriaQuery.select(homeRoot);
+        criteriaQuery.where(cb.equal(homeRoot.get("name"), name));
+
+        List<Home> homes = manager.createQuery(criteriaQuery).getResultList();
+
+        showResponse(homes);
+
+        return homes;
+    }
+
+    public List<Home> getPersonBySurname(String surname) {
+        criteriaQuery.select(homeRoot);
+        criteriaQuery.where(cb.equal(homeRoot.get("surname"), surname));
+
+        List<Home> homes = manager.createQuery(criteriaQuery).getResultList();
+
+        showResponse(homes);
+
+        return homes;
+    }
+
+    public List<Home> getPersons() {
+        CriteriaQuery<Home> all = criteriaQuery.select(homeRoot);
+        TypedQuery<Home> allQuery = manager.createQuery(all);
+        List<Home> homes = allQuery.getResultList();
+
+        showResponse(homes);
+
+        return homes;
+    }
     
 }

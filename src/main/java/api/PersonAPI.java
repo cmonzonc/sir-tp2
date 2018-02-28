@@ -44,9 +44,10 @@ public class PersonAPI implements CommandAPI<Person> {
         }
     }
 
-    public Person remove(Person identifier) {
+    public Person remove(Integer identifier) {
+    	System.out.println(identifier);
         person = entityManager.getReference(Person.class, identifier);
-
+        	
         if (person != null) {
             entityTransaction.begin();
             entityManager.remove(person);
